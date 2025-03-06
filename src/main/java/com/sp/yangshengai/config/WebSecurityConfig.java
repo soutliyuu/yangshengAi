@@ -1,12 +1,17 @@
 package com.sp.yangshengai.config;
 
+import com.sp.yangshengai.exception.CustomException;
+import com.sp.yangshengai.exception.ErrorEnum;
+import com.sp.yangshengai.filter.ExceptionFilter;
+import com.sp.yangshengai.filter.JwtAuthenticationFilter;
 import com.sp.yangshengai.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -15,10 +20,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -26,111 +39,87 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor//bean注解
 // 新版不需要继承WebSecurityConfigurerAdapter
 public class WebSecurityConfig {
- 
-	// 这个类主要是获取库中的用户信息，交给security
-	private final UserServiceImpl userDetailsService;
-	// 这个的类是认证失败处理（我在这里主要是把错误消息以json方式返回）
-	private final JwtAuthenticationEntryPoint authenticationEntryPoint;
-	// 鉴权失败的时候的处理类
 
-	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-	//	登录成功处理
-	private final LoginSuccessHandler loginSuccessHandler;
-	//	登录失败处理
-	private final LoginFailureHandler loginFailureHandler;
-	//	登出成功处理
-	private final LoginLogoutSuccessHandler loginLogoutSuccessHandler;
-	//	token过滤器
-	private final JwtTokenFilter jwtTokenFilter;
-	
+	private final CorsFilter corsFilter;
+	private final ExceptionFilter exceptionFilter;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final UserServiceImpl myUserDetailsService;
+	//private final PermitResource permitResource;
+	private final ApplicationEventPublisher applicationEventPublisher;
 	@Bean
-	public AuthenticationManager authenticationManager(
-			AuthenticationConfiguration authenticationConfiguration
-	) throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+		// 无需认证的地址列表
+		//List<String> permitList = permitResource.getPermitList();
+		//String[] permits = permitList.toArray(new String[0]);
+		http.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(request -> request
+						.requestMatchers("/user/login","/user/signup","/upload/**").permitAll()
+						.requestMatchers(HttpMethod.OPTIONS).permitAll()
+						//.requestMatchers("/admin/**").hasAnyRole(RoleEnum.ADMIN.name(), RoleEnum.SUPER_ADMIN.name())
+						.anyRequest().authenticated()
+				)
+				// 禁用 session
+				.sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				// 使用自定义 provider
+				.authenticationProvider(authenticationProvider())
+				// 定义过滤器调用顺序
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(exceptionFilter, JwtAuthenticationFilter.class)
+				.addFilterBefore(corsFilter, ExceptionFilter.class);
+
+		// 异常处理
+		http.exceptionHandling(handler -> handler
+				.authenticationEntryPoint((request, response, authenticationException) -> {
+					if (authenticationException instanceof DisabledException){
+						// 用户被禁用
+						throw CustomException.of(ErrorEnum.USER_IS_DISABLED);
+					}
+					if (authenticationException instanceof UsernameNotFoundException ||
+							authenticationException instanceof BadCredentialsException){
+						// 用户名或密码错误
+						throw CustomException.of(ErrorEnum.USERNAME_OR_PASSWORD_ERROR);
+					}
+					throw CustomException.of(ErrorEnum.AUTHENTICATION_FAILURE);
+				})
+				.accessDeniedHandler((request, response, accessDeniedException) -> {
+					throw CustomException.of(ErrorEnum.AUTHORIZATION_FAILURE);
+				})
+		);
+		return http.build();
 	}
- 
-	// 加密方式
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
- 
+
+
 	/**
-	 * 核心配置
-	 */
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-log.info("------------filterChain------------");
-		http
-				//  禁用basic明文验证
-				.httpBasic(Customizer.withDefaults())
-				//  基于 token ，不需要 csrf
-				.csrf(AbstractHttpConfigurer::disable)
-				//  禁用默认登录页
-				.formLogin(fl ->
-						fl.loginPage(PathMatcherUtil.FORM_LOGIN_URL)
-						.loginProcessingUrl(PathMatcherUtil.TO_LOGIN_URL)
-						.usernameParameter("username")
-						.passwordParameter("password")
-						.successHandler(loginSuccessHandler)
-						.failureHandler(loginFailureHandler)
-						.permitAll())
-				//  禁用默认登出页
-				.logout(lt -> lt.logoutSuccessHandler(loginLogoutSuccessHandler))
-				//  基于 token ， 不需要 session
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				//  设置 处理鉴权失败、认证失败
-				.exceptionHandling(
-						exceptions -> exceptions.authenticationEntryPoint(authenticationEntryPoint)
-								.accessDeniedHandler(jwtAccessDeniedHandler)
-				)
-				//  下面开始设置权限
-				.authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest
-						//  允许所有 OPTIONS 请求
-						.requestMatchers(PathMatcherUtil.AUTH_WHITE_LIST).permitAll()
-						//  允许直接访问 授权登录接口
-//						.requestMatchers(HttpMethod.POST, "/web/authenticate").permitAll()
-						//  允许 SpringMVC 的默认错误地址匿名访问
-//						.requestMatchers("/error").permitAll()
-						//  其他所有接口必须有Authority信息，Authority在登录成功后的UserDetailImpl对象中默认设置“ROLE_USER”
-						//.requestMatchers("/**").hasAnyAuthority("ROLE_USER")
-//						.requestMatchers("/heartBeat/**", "/main/**").permitAll()
-						//  允许任意请求被已登录用户访问，不检查Authority
-						.anyRequest().authenticated()
-				)
-				//  添加过滤器
-				.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-		//可以加载fram嵌套页面
-		http.headers( headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
-		return http.build();
-	}
-	@Bean
-	public UserDetailsService userDetailsService() {
-		return userDetailsService::loadUserByUsername;
-	}
- 
-	/**
-	 * 调用loadUserByUserName获取userDetail信息，在AbstractUserDetailsAuthenticationProvider里执行用户状态检查
-	 *
-	 * @return
+	 * 提供用户详情获取以及密码加密方式
 	 */
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(userDetailsService);
+		authProvider.setUserDetailsService(myUserDetailsService);
 		authProvider.setPasswordEncoder(passwordEncoder());
+		authProvider.setHideUserNotFoundExceptions(false);
 		return authProvider;
 	}
+
 	/**
-	 * 配置跨源访问(CORS)
-	 *
-	 * @return
+	 * 调用其中 authenticate 方法
+	 * 底层会使用 AuthenticationProvider 从数据库获取用户信息进行登录校验
 	 */
 	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-		return source;
+	public AuthenticationManager authenticationManager() {
+		List<AuthenticationProvider> providerList = new ArrayList<>();
+		providerList.add(authenticationProvider());
+
+		ProviderManager providerManager = new ProviderManager(providerList);
+		providerManager.setAuthenticationEventPublisher(new DefaultAuthenticationEventPublisher(applicationEventPublisher));
+
+		return providerManager;
 	}
+
 }
