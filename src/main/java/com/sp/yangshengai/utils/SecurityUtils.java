@@ -5,7 +5,6 @@ package com.sp.yangshengai.utils;
 import com.sp.yangshengai.pojo.entity.UserThreadLocalParam;
 
 import java.lang.ref.SoftReference;
-import java.util.List;
 
 /**
  * 从 ThreadLocal 中获取用户信息

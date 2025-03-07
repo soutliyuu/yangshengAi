@@ -42,4 +42,9 @@ public class UserController {
 
         return R.ok(userService.info());
     }
+
+    @PostMapping("/logout")
+    public void logout(){
+        userService.logout();
+    }
 }

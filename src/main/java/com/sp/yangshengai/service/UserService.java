@@ -21,4 +21,6 @@ public interface UserService extends IService<User> {
     TokenVO login(UserBo bo);
 
     UserVo info();
+
+    void logout();
 }

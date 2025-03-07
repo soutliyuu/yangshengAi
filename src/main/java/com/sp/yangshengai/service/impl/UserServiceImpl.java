@@ -14,7 +14,10 @@ import com.sp.yangshengai.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sp.yangshengai.utils.JwtUtils;
 import com.sp.yangshengai.utils.SecurityUtils;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Remove;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,9 +46,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final JwtUtils jwtUtils;
 
-    public UserServiceImpl(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+//    public UserServiceImpl(UserMapper userMapper, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+//        this.userMapper = userMapper;
+//        this.authenticationManager = authenticationManager;
+//        this.jwtUtils = jwtUtils;
+//    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -96,6 +101,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .password(user.getPassword())
                 .role(user.getRole()).build();
     }
+
+    @Override
+    public void logout() {
+        //jwtUtils.delCacheToken(SecurityUtils.getUserId());
+    }
+
+
 
 
 
