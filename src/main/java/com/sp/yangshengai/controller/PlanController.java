@@ -35,13 +35,13 @@ public class PlanController {
 
     @PutMapping("/update")
     public R<Void> update(PlanBo planBo) {
-        planService.add(planBo);
+        planService.updatePlan(planBo);
         return R.ok();
     }
 
     @DeleteMapping("/delete/{id}")
     public R<Void> delete(@PathVariable Integer id) {
-        planService.removeById(id);
+        planService.delete(id);
         return R.ok();
     }
 

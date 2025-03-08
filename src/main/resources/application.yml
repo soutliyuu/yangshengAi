@@ -18,6 +18,9 @@ spring:
 mybatis-plus:
   type-aliases-package: com.sp.yangshengai.pojo
 
+token:
+  secret: yangshengai
+  expiration: 7200000
 file:
   #???????
   path: /Users/liyu/Downloads/

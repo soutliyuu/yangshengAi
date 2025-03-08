@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @TableName("e_plan")
-
+@Builder
 public class EPlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,4 +38,6 @@ public class EPlan implements Serializable {
 
     @TableField("description")
     private String description;
+
+
 }

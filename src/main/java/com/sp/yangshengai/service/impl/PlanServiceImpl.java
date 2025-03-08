@@ -115,4 +115,25 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         }
         return null;
     }
+
+    @Override
+    public void delete(Integer id) {
+        this.removeById(id);
+        planSmallService.remove(new LambdaQueryWrapper<PlanSmall>().eq(PlanSmall::getPlanId, id));
+    }
+
+    @Override
+    public void updatePlan(PlanBo planBo) {
+        Plan plan = Plan.builder().id(planBo.getId())
+                .planName(planBo.getPlanName())
+                .description(planBo.getDescription())
+                .build();
+        this.updateById(plan);
+        planSmallService.remove(new LambdaQueryWrapper<PlanSmall>().eq(PlanSmall::getPlanId, planBo.getId()));
+        List<PlanSmall> planSmallList = planBo.getSmallTypeIds().stream().map(id -> PlanSmall.builder()
+                .planId(plan.getId())
+                .sId(id)
+                .build()).toList();
+        planSmallService.saveBatch(planSmallList);
+    }
 }

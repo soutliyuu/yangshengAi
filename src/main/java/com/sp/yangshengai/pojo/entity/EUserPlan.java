@@ -3,6 +3,7 @@ package com.sp.yangshengai.pojo.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @TableName("e_user_plan")
-
+@Builder
 public class EUserPlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,4 +37,6 @@ public class EUserPlan implements Serializable {
 
     @TableField("create_time")
     private LocalDateTime createTime;
+
+
 }

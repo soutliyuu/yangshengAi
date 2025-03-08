@@ -5,13 +5,13 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PlanBo {
+public class EPlanBo {
     private Integer id;
 
-    private String planName;
+    private String ePlanName;
 
     private String description;
 
-    private List<Integer> smallTypeIds;
+    private List<Integer> eSmallTypeIds;
 
 }

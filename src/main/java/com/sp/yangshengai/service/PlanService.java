@@ -27,4 +27,8 @@ public interface PlanService extends IService<Plan> {
     List<PlanDetailVo> getDetailById(Integer id);
 
     List<PlanVo> getSuggestPlan();
+
+    void delete(Integer id);
+
+    void updatePlan(PlanBo planBo);
 }
