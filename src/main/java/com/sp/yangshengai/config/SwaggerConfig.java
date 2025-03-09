@@ -26,7 +26,7 @@ public class SwaggerConfig {
                 // 返回一个ApiSelectorBuilder实例，用来控制接口被Swagger做成文档
                 .select()
                 // 用于指定扫描哪个包下的接口
-                .apis(RequestHandlerSelectors.basePackage("com.example.demo"))
+                .apis(RequestHandlerSelectors.basePackage("com.sp.yangshengai"))
                 // 选择所有的API，如果你只想为部分API生成文档，可以配置这里
                 .paths(PathSelectors.any())
                 .build();
