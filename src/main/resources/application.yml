@@ -19,7 +19,7 @@ mybatis-plus:
   type-aliases-package: com.sp.yangshengai.pojo
 
 token:
-  secret: yangshengai
+  secret: token_yangsheng_ai_management_system_random
   expiration: 7200000
 file:
   #???????

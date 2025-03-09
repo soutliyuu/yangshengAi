@@ -88,6 +88,6 @@ public class JwtUtils {
      */
     private Key getSigningKey() {
         // 直接使用 secret 字符串生成 Key
-        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 }
