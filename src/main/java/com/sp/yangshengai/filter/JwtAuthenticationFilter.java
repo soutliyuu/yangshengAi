@@ -1,6 +1,7 @@
 package com.sp.yangshengai.filter;
 
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
@@ -17,6 +18,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -36,9 +39,12 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
-    private final UserServiceImpl myUserDetailsService;
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
+
+    private UserServiceImpl getMyUserDetailsService() {
+        return SpringUtil.getBean(UserServiceImpl.class);
+    }
 
 
     @Override
@@ -68,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         MyUserDetails userDetails;
         try {
             String username = jwtUtils.extractAllClaims(token).getSubject();
-            userDetails = (MyUserDetails) myUserDetailsService.loadUserByUsername(username);
+            userDetails = (MyUserDetails) this.getMyUserDetailsService().loadUserByUsername(username);
         } catch (Exception e) {
             throw CustomException.of(ErrorEnum.LOGIN_STATUS_INVALID);
         }

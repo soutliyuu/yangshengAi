@@ -1,5 +1,7 @@
 package com.sp.yangshengai.config;
 
+import ch.qos.logback.core.util.StringUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.sp.yangshengai.exception.CustomException;
 import com.sp.yangshengai.exception.ErrorEnum;
 import com.sp.yangshengai.filter.ExceptionFilter;
@@ -7,9 +9,11 @@ import com.sp.yangshengai.filter.JwtAuthenticationFilter;
 import com.sp.yangshengai.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -33,20 +37,35 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Slf4j
 @Configuration
-@EnableWebSecurity //开启SpringSecurity的默认行为
-@RequiredArgsConstructor//bean注解
+@EnableWebSecurity
+@RequiredArgsConstructor
+//开启SpringSecurity的默认行为
+//bean注解
 // 新版不需要继承WebSecurityConfigurerAdapter
 public class WebSecurityConfig {
 
 	private final CorsFilter corsFilter;
-	private final ExceptionFilter exceptionFilter;
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-	private final UserServiceImpl myUserDetailsService;
+
+	private  final ExceptionFilter exceptionFilter;
+
+
 	//private final PermitResource permitResource;
-	private final ApplicationEventPublisher applicationEventPublisher;
-	@Bean
+
+	private  final ApplicationEventPublisher applicationEventPublisher;
+
+   private JwtAuthenticationFilter getJwtAuthenticationFilter(){
+	   return SpringUtil.getBean(JwtAuthenticationFilter.class);
+   }
+
+	private UserServiceImpl getMyUserDetailsService() {
+		return SpringUtil.getBean(UserServiceImpl.class);
+	}
+
+
+    @Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 		// 无需认证的地址列表
@@ -64,7 +83,7 @@ public class WebSecurityConfig {
 				// 使用自定义 provider
 				.authenticationProvider(authenticationProvider())
 				// 定义过滤器调用顺序
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(this.getJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(exceptionFilter, JwtAuthenticationFilter.class)
 				.addFilterBefore(corsFilter, ExceptionFilter.class);
 
@@ -101,7 +120,7 @@ public class WebSecurityConfig {
 	@Bean
 	public AuthenticationProvider authenticationProvider() {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(myUserDetailsService);
+		authProvider.setUserDetailsService(this.getMyUserDetailsService());
 		authProvider.setPasswordEncoder(passwordEncoder());
 		authProvider.setHideUserNotFoundExceptions(false);
 		return authProvider;

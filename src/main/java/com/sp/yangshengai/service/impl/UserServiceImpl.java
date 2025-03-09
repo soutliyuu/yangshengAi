@@ -1,6 +1,7 @@
 package com.sp.yangshengai.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sp.yangshengai.exception.CustomException;
@@ -42,15 +43,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final UserMapper userMapper;
 
-    private final AuthenticationManager authenticationManager;
 
-    private final JwtUtils jwtUtils;
+    private  final JwtUtils jwtUtils;
 
-//    public UserServiceImpl(UserMapper userMapper, AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
-//        this.userMapper = userMapper;
-//        this.authenticationManager = authenticationManager;
-//        this.jwtUtils = jwtUtils;
-//    }
+   private AuthenticationManager getAuthenticationManager() {
+       return SpringUtil.getBean(AuthenticationManager.class);
+   }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -80,7 +78,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public TokenVO login(UserBo bo) {
-        Authentication authentication = authenticationManager.authenticate(
+        Authentication authentication = this.getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(bo.getUsername(),bo.getPassword())
         );
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
