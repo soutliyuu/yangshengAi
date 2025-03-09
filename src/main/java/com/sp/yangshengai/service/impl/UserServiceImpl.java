@@ -3,6 +3,7 @@ package com.sp.yangshengai.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sp.yangshengai.exception.CustomException;
 import com.sp.yangshengai.pojo.entity.MyUserDetails;
@@ -43,10 +44,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final UserMapper userMapper;
 
-
     private  final JwtUtils jwtUtils;
 
-   private AuthenticationManager getAuthenticationManager() {
+    private final PasswordEncoder passwordEncoder;
+
+    private AuthenticationManager getAuthenticationManager() {
        return SpringUtil.getBean(AuthenticationManager.class);
    }
 
@@ -67,7 +69,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (isUsernameExist(bo.getUsername())) {
             throw CustomException.of("用户已经存在");
         }
+        // 加密密码
+        String encodedPassword = passwordEncoder.encode(bo.getPassword());
         User user = BeanUtil.copyProperties(bo, User.class);
+        user.setPassword(encodedPassword);
         save(user);
 
     }

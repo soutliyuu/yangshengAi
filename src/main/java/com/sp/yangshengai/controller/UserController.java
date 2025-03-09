@@ -29,7 +29,6 @@ public class UserController {
     @ApiModelProperty(value = "注册")
     @PostMapping("/signup")
     public void signup(@RequestBody UserBo bo){
-
         userService.signup(bo);
     }
 

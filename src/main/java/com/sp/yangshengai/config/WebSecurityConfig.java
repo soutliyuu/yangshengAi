@@ -73,7 +73,7 @@ public class WebSecurityConfig {
 		//String[] permits = permitList.toArray(new String[0]);
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(request -> request
-						.requestMatchers("/user/login","/user/signup","/upload/**").permitAll()
+						.requestMatchers("/user/login","/user/signup","/upload/**","/swagger-ui.html").permitAll()
 						.requestMatchers(HttpMethod.OPTIONS).permitAll()
 						//.requestMatchers("/admin/**").hasAnyRole(RoleEnum.ADMIN.name(), RoleEnum.SUPER_ADMIN.name())
 						.anyRequest().authenticated()

@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -86,6 +88,6 @@ public class JwtUtils {
      */
     private Key getSigningKey() {
         // 直接使用 secret 字符串生成 Key
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        return Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 }
