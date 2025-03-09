@@ -6,6 +6,7 @@ import com.sp.yangshengai.pojo.entity.R;
 import com.sp.yangshengai.pojo.entity.Smalltype;
 import com.sp.yangshengai.service.ESmalltypeService;
 import com.sp.yangshengai.service.SmalltypeService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/eSmalltype")
+@Api(tags = "运动小类")
 public class ESmalltypeController {
 
     private final ESmalltypeService esmalltypeService;

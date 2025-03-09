@@ -4,6 +4,7 @@ import com.sp.yangshengai.pojo.entity.Bigtype;
 import com.sp.yangshengai.pojo.entity.EBigtype;
 import com.sp.yangshengai.pojo.entity.R;
 import com.sp.yangshengai.service.EBigtypeService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/eBigtype")
+@Api(tags = "运动大类")
 public class EBigtypeController {
 
     private final EBigtypeService ebigtypeService;

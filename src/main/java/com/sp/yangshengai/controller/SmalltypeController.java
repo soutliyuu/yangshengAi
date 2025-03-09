@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sp.yangshengai.pojo.entity.R;
 import com.sp.yangshengai.pojo.entity.Smalltype;
 import com.sp.yangshengai.service.SmalltypeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/smalltype")
+@Api(tags = "获取小类，传大类id")
 public class SmalltypeController {
     private final SmalltypeService smalltypeService;
     @GetMapping("/list")

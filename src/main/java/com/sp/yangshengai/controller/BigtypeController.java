@@ -3,6 +3,7 @@ package com.sp.yangshengai.controller;
 import com.sp.yangshengai.pojo.entity.Bigtype;
 import com.sp.yangshengai.pojo.entity.R;
 import com.sp.yangshengai.service.BigtypeService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/bigtype")
+@Api(tags = "大类")
 public class BigtypeController {
     private final BigtypeService bigtypeService;
 
