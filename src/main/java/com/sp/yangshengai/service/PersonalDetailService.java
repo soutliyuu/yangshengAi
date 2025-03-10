@@ -2,6 +2,7 @@ package com.sp.yangshengai.service;
 
 import com.sp.yangshengai.pojo.entity.PersonalDetail;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sp.yangshengai.pojo.entity.bo.PersonalDetailBo;
 
 /**
  * <p>
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface PersonalDetailService extends IService<PersonalDetail> {
 
+    void add(PersonalDetailBo personalDetailbo);
 }
