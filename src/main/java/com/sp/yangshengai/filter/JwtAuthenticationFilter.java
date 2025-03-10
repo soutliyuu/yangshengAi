@@ -5,6 +5,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
+import com.sp.yangshengai.exception.AnonApi;
 import com.sp.yangshengai.exception.CustomException;
 import com.sp.yangshengai.exception.ErrorEnum;
 import com.sp.yangshengai.pojo.entity.MyUserDetails;
@@ -52,6 +53,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+
+        String requestUri = request.getRequestURI();
+        if (requestUri.startsWith("/v3/api-docs") ||
+                requestUri.startsWith("/swagger-ui") ||
+                requestUri.startsWith("/webjars") ||
+                requestUri.startsWith("/swagger-resources")) {
+            log.info("放行 Swagger UI 请求: {}", requestUri);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String token = request.getHeader("Authorization");
         if (StringUtils.isBlank(token)) {
             // token 不存在，放行，交由 SpringSecurity 鉴权
@@ -60,15 +72,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
 
-//        HandlerMethod handlerMethod = getHandlerMethod(request);
-//        if (handlerMethod != null) {
-//            AnonApi anonApi = handlerMethod.getMethod().getAnnotation(AnonApi.class);
-//            if (anonApi != null) {
-//                // 公共接口，放行
-//                filterChain.doFilter(request, response);
-//                return;
-//            }
-//        }
+        HandlerMethod handlerMethod = getHandlerMethod(request);
+        if (handlerMethod != null) {
+            AnonApi anonApi = handlerMethod.getMethod().getAnnotation(AnonApi.class);
+            if (anonApi != null) {
+                // 公共接口，放行
+                filterChain.doFilter(request, response);
+                return;
+            }
+        }
 
         // 用户信息
         MyUserDetails userDetails;

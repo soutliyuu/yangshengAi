@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Data
 public class UserThreadLocalParam {
-    private Long Id;
+    private Integer Id;
     private String username;
     private String password;
 

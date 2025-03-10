@@ -9,6 +9,7 @@ import com.sp.yangshengai.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import java.lang.ref.SoftReference;
 /**
  * 将 SpringSecurity 上下文中的用户信息存入线程本地
  */
+@Slf4j
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
@@ -41,6 +43,8 @@ public class AuthInterceptor implements HandlerInterceptor {
         MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal();
 
         BeanUtils.copyProperties(userDetails, param);
+        log.info("用户信息: {}", userDetails);
+        log.info("用户信息已存入线程本地: {}", param);
 
         return true;
     }

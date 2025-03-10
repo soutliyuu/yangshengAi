@@ -3,7 +3,8 @@ package com.sp.yangshengai.controller;
 import com.sp.yangshengai.pojo.entity.Bigtype;
 import com.sp.yangshengai.pojo.entity.R;
 import com.sp.yangshengai.service.BigtypeService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,10 +23,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/bigtype")
-@Api(tags = "大类")
+@Tag(name = "膳食大类")
 public class BigtypeController {
     private final BigtypeService bigtypeService;
-
+    @Operation(summary = "获取大类")
     @GetMapping("/list")
     public R<List<Bigtype>> get()
     {

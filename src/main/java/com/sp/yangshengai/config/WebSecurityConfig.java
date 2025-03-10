@@ -1,6 +1,5 @@
 package com.sp.yangshengai.config;
 
-import ch.qos.logback.core.util.StringUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.sp.yangshengai.exception.CustomException;
 import com.sp.yangshengai.exception.ErrorEnum;
@@ -9,29 +8,21 @@ import com.sp.yangshengai.filter.JwtAuthenticationFilter;
 import com.sp.yangshengai.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.ArrayList;
@@ -73,7 +64,11 @@ public class WebSecurityConfig {
 		//String[] permits = permitList.toArray(new String[0]);
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(request -> request
-						.requestMatchers("/user/login","/user/signup","/upload/**","/swagger-ui.html").permitAll()
+						.requestMatchers("/user/login","/user/signup","/upload/**", "/v3/api-docs/**",
+								"/swagger-ui/**",
+								"/swagger-ui.html",
+								"/webjars/**",
+								"/doc.html").permitAll()
 						.requestMatchers(HttpMethod.OPTIONS).permitAll()
 						//.requestMatchers("/admin/**").hasAnyRole(RoleEnum.ADMIN.name(), RoleEnum.SUPER_ADMIN.name())
 						.anyRequest().authenticated()

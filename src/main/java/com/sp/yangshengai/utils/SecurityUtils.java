@@ -23,8 +23,15 @@ public class SecurityUtils {
         return USER_THREAD_LOCAL.get() == null ? null : USER_THREAD_LOCAL.get().get();
     }
 
-    public static Long getUserId() {
-        return getUserThreadLocalParam() == null ? null : getUserThreadLocalParam().getId();
+    public static Integer getUserId() {
+        SoftReference<UserThreadLocalParam> userRef = USER_THREAD_LOCAL.get();
+        if (userRef != null) {
+            UserThreadLocalParam user = userRef.get();
+            if (user != null) {
+                return user.getId(); // 这里返回 Integer 类型
+            }
+        }
+        return null;
     }
 
     public static String getUsername(){

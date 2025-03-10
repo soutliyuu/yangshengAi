@@ -3,6 +3,10 @@ package com.sp.yangshengai.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.sp.yangshengai.exception.AnonApi;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sp.yangshengai.exception.CustomException;
@@ -40,6 +44,8 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
+@Tag(name = "用户")
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService, UserDetailsService {
 
     private final UserMapper userMapper;
@@ -53,6 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
    }
 
     @Override
+
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User user = getOne(new LambdaQueryWrapper<User>().eq(User::getUsername, username));
@@ -65,6 +72,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
+    @AnonApi
+    @Operation(summary = "注册")
     public void signup(UserBo bo) {
         if (isUsernameExist(bo.getUsername())) {
             throw CustomException.of("用户已经存在");
@@ -82,6 +91,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @AnonApi
+    @Operation(summary = "登陆")
     public TokenVO login(UserBo bo) {
         Authentication authentication = this.getAuthenticationManager().authenticate(
                 new UsernamePasswordAuthenticationToken(bo.getUsername(),bo.getPassword())
@@ -93,7 +104,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Operation(summary = "获取用户信息")
     public UserVo info() {
+        Integer id = SecurityUtils.getUserId();
+        log.info("id :{}", id);
+
 
          User user = Optional.ofNullable(userMapper.selectById(SecurityUtils.getUserId()))
                 .orElseThrow(() -> CustomException.of("用户不存在"));
@@ -106,6 +121,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Operation(summary = "登出")
     public void logout() {
         //jwtUtils.delCacheToken(SecurityUtils.getUserId());
     }

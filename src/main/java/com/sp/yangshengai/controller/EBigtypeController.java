@@ -1,10 +1,10 @@
 package com.sp.yangshengai.controller;
 
-import com.sp.yangshengai.pojo.entity.Bigtype;
 import com.sp.yangshengai.pojo.entity.EBigtype;
 import com.sp.yangshengai.pojo.entity.R;
 import com.sp.yangshengai.service.EBigtypeService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +23,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/eBigtype")
-@Api(tags = "运动大类")
+@Tag(name = "运动大类")
 public class EBigtypeController {
 
     private final EBigtypeService ebigtypeService;
-
+    @Operation(summary = "获取大类")
     @GetMapping("/list")
     public R<List<EBigtype>> get()
     {
