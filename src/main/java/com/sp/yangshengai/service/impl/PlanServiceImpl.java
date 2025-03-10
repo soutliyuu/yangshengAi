@@ -6,11 +6,8 @@ import com.sp.yangshengai.mapper.PlanMapper;
 import com.sp.yangshengai.pojo.entity.bo.PlanBo;
 import com.sp.yangshengai.pojo.entity.vo.PlanDetailVo;
 import com.sp.yangshengai.pojo.entity.vo.PlanVo;
-import com.sp.yangshengai.service.PlanService;
+import com.sp.yangshengai.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sp.yangshengai.service.PlanSmallService;
-import com.sp.yangshengai.service.SmalltypeService;
-import com.sp.yangshengai.service.UserPlanService;
 import com.sp.yangshengai.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +32,8 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     private final SmalltypeService smalltypeService;
 
+    private final UserCplanService userCplanService;
+
     @Override
     public void add(PlanBo planBo) {
         Plan plan = Plan.builder()
@@ -54,6 +53,18 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
                 .userId(Math.toIntExact(SecurityUtils.getUserId()))
                 .build();
         userPlanService.save(userPlan);
+
+        UserCplan userCplan = userCplanService.getOne(new LambdaQueryWrapper<UserCplan>().eq(UserCplan::getUserId, SecurityUtils.getUserId()));
+        if (userCplan == null){
+            userCplan = UserCplan.builder()
+                    .userId(Math.toIntExact(SecurityUtils.getUserId()))
+                    .cPlanid(plan.getId())
+                    .cEplanid(null)
+                    .build();
+        }else {
+            userCplan.setCPlanid(plan.getId());
+            userCplanService.updateById(userCplan);
+        }
 
     }
 

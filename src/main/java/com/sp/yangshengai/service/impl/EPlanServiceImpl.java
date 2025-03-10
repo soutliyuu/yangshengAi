@@ -35,6 +35,8 @@ public class EPlanServiceImpl extends ServiceImpl<EPlanMapper, EPlan> implements
 
     private final ESmalltypeService smalltypeService;
 
+    private final UserCplanService userCplanService;
+
     @Override
     public void add(EPlanBo planBo) {
         EPlan eplan = EPlan.builder()
@@ -54,6 +56,19 @@ public class EPlanServiceImpl extends ServiceImpl<EPlanMapper, EPlan> implements
                 .userId(Math.toIntExact(SecurityUtils.getUserId()))
                 .build();
         userPlanService.save(userPlan);
+
+        UserCplan userCplan = userCplanService.getOne(new LambdaQueryWrapper<UserCplan>().eq(UserCplan::getUserId, SecurityUtils.getUserId()));
+        if (userCplan == null){
+            userCplan = UserCplan.builder()
+                    .userId(Math.toIntExact(SecurityUtils.getUserId()))
+                    .cPlanid(null)
+                    .cEplanid(eplan.getId())
+                    .build();
+        }else {
+            userCplan.setCEplanid(eplan.getId());
+            userCplanService.updateById(userCplan);
+        }
+
 
     }
 
