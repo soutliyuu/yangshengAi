@@ -5,10 +5,7 @@ import com.sp.yangshengai.service.PersonalDetailService;
 import com.sp.yangshengai.service.SigninService;
 import com.sp.yangshengai.service.UserCplanService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/common")
@@ -27,9 +24,15 @@ public class CommonController {
 
     }
 
-    @PutMapping("/setcplan")
-    private R<Void> setcplan(){
-        userCplanService.add();
+    @PutMapping("/setcplanByeplan/{id}")
+    private R<Void> setcplan(@PathVariable Integer id){
+        userCplanService.addbyeplan(id);
+        return R.ok();
+    }
+
+    @PutMapping("/setcplanByplan/{id}")
+    private R<Void> setplan(@PathVariable Integer id){
+        userCplanService.addbyplan(id);
         return R.ok();
     }
 }

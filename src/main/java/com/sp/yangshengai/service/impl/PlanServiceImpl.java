@@ -53,18 +53,18 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
                 .userId(Math.toIntExact(SecurityUtils.getUserId()))
                 .build();
         userPlanService.save(userPlan);
-
-        UserCplan userCplan = userCplanService.getOne(new LambdaQueryWrapper<UserCplan>().eq(UserCplan::getUserId, SecurityUtils.getUserId()));
-        if (userCplan == null){
-            userCplan = UserCplan.builder()
-                    .userId(Math.toIntExact(SecurityUtils.getUserId()))
-                    .cPlanid(plan.getId())
-                    .cEplanid(null)
-                    .build();
-        }else {
-            userCplan.setCPlanid(plan.getId());
-            userCplanService.updateById(userCplan);
-        }
+//
+//        UserCplan userCplan = userCplanService.getOne(new LambdaQueryWrapper<UserCplan>().eq(UserCplan::getUserId, SecurityUtils.getUserId()));
+//        if (userCplan == null){
+//            userCplan = UserCplan.builder()
+//                    .userId(Math.toIntExact(SecurityUtils.getUserId()))
+//                    .cPlanid(plan.getId())
+//                    .cEplanid(null)
+//                    .build();
+//        }else {
+//            userCplan.setCPlanid(plan.getId());
+//            userCplanService.updateById(userCplan);
+//        }
 
     }
 

@@ -13,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserCplanService extends IService<UserCplan> {
 
+    void addbyeplan(Integer id);
+
+    void addbyplan(Integer id);
 }
