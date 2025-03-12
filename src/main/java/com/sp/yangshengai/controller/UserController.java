@@ -27,8 +27,9 @@ public class UserController {
     private final UserService userService;
     @Operation(summary = "注册")
     @PostMapping("/signup")
-    public void signup(@RequestBody UserBo bo){
+    public R<Void> signup(@RequestBody UserBo bo){
         userService.signup(bo);
+        return R.ok();
     }
 
     @Operation(summary = "登陆")
