@@ -82,6 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String encodedPassword = passwordEncoder.encode(bo.getPassword());
         User user = BeanUtil.copyProperties(bo, User.class);
         user.setPassword(encodedPassword);
+        user.setRole(0);
         save(user);
 
     }
