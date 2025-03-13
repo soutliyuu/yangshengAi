@@ -31,13 +31,13 @@ public class EPlanController {
     private final EPlanService eplanService;
     @Operation(summary = "添加")
     @PutMapping("/add")
-    public R<Void> add(EPlanBo eplanBo) {
+    public R<Void> add(@RequestBody EPlanBo eplanBo) {
         eplanService.add(eplanBo);
         return R.ok();
     }
     @Operation(summary = "修改")
     @PutMapping("/update")
-    public R<Void> update(EPlanBo eplanBo) {
+    public R<Void> update(@RequestBody EPlanBo eplanBo) {
         eplanService.updatePlan(eplanBo);
         return R.ok();
     }
@@ -47,7 +47,7 @@ public class EPlanController {
         eplanService.delete(id);
         return R.ok();
     }
-    @Operation(summary = "分页")
+    @Operation(summary = "个人计划分页")
     @GetMapping("/list")
     public TableDataInfo<EPlanVo> list(PageQuery pageQuery) {
         return eplanService.getpage(pageQuery);

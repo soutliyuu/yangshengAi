@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sp.yangshengai.pojo.entity.PersonalDetail;
 import com.sp.yangshengai.mapper.PersonalDetailMapper;
 import com.sp.yangshengai.pojo.entity.bo.PersonalDetailBo;
+import com.sp.yangshengai.pojo.entity.vo.PersonalDetailVo;
 import com.sp.yangshengai.service.PersonalDetailService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sp.yangshengai.utils.SecurityUtils;
@@ -42,5 +43,10 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
         } else {
             throw new RuntimeException("今天已经上传信息");
         }
+    }
+
+    @Override
+    public PersonalDetailVo getTodayDetail() {
+        return null;
     }
 }

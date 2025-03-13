@@ -32,13 +32,13 @@ public class PlanController {
     private final PlanService planService;
     @Operation(summary = "添加计划")
     @PutMapping("/add")
-    public R<Void> add(PlanBo planBo) {
+    public R<Void> add(@RequestBody PlanBo planBo) {
         planService.add(planBo);
         return R.ok();
     }
     @Operation(summary = "修改计划")
     @PutMapping("/update")
-    public R<Void> update(PlanBo planBo) {
+    public R<Void> update(@RequestBody PlanBo planBo) {
         planService.updatePlan(planBo);
         return R.ok();
     }

@@ -1,10 +1,14 @@
 package com.sp.yangshengai.service;
 
+import com.sp.yangshengai.pojo.entity.PageQuery;
+import com.sp.yangshengai.pojo.entity.TableDataInfo;
 import com.sp.yangshengai.pojo.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sp.yangshengai.pojo.entity.bo.UserBo;
 import com.sp.yangshengai.pojo.entity.vo.TokenVO;
 import com.sp.yangshengai.pojo.entity.vo.UserVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -23,4 +27,8 @@ public interface UserService extends IService<User> {
     UserVo info();
 
     void logout();
+
+    TableDataInfo<User> getUsers(PageQuery pageQuery);
+
+    void updatePassword(String id, String password);
 }

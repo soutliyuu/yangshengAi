@@ -3,7 +3,10 @@ package com.sp.yangshengai.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sp.yangshengai.exception.AnonApi;
+import com.sp.yangshengai.pojo.entity.PageQuery;
+import com.sp.yangshengai.pojo.entity.TableDataInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -127,7 +130,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //jwtUtils.delCacheToken(SecurityUtils.getUserId());
     }
 
+    @Override
+    public TableDataInfo<User> getUsers(PageQuery pageQuery) {
 
+        IPage<User> page = userMapper.selectPage(pageQuery.build(), new QueryWrapper<User>());
+
+        return TableDataInfo.build(page);
+
+
+    }
+
+    @Override
+    public void updatePassword(String id, String password) {
+        User user = getOne(new LambdaQueryWrapper<User>().eq(User::getId, id));
+        user.setPassword(passwordEncoder.encode(password));
+        updateById(user);
+
+    }
 
 
 
