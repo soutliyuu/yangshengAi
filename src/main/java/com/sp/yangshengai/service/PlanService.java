@@ -31,4 +31,8 @@ public interface PlanService extends IService<Plan> {
     void delete(Integer id);
 
     void updatePlan(PlanBo planBo);
+
+    void setSuggestPlan(Integer id);
+
+    void removeSuggestPlan(Integer id);
 }

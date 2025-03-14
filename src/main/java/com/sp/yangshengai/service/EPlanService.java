@@ -31,4 +31,8 @@ public interface EPlanService extends IService<EPlan> {
     EPlanDetailVo getDetailById(Integer id);
 
     List<EPlanVo> getSuggestPlan();
+
+    void setSuggestEPlan(Integer id);
+
+    void removeSuggestEPlan(Integer id);
 }

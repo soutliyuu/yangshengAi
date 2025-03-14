@@ -1,6 +1,8 @@
 package com.sp.yangshengai.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.sp.yangshengai.pojo.entity.*;
 import com.sp.yangshengai.mapper.PlanMapper;
 import com.sp.yangshengai.pojo.entity.bo.PlanBo;
@@ -152,5 +154,23 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
                 .sId(id)
                 .build()).toList();
         planSmallService.saveBatch(planSmallList);
+    }
+
+    @Override
+    public void setSuggestPlan(Integer id) {
+        List<Plan> list = this.list(new LambdaQueryWrapper<Plan>().eq(Plan::getStatus, "1"));
+        if (list.size()>9){
+            throw  new RuntimeException("只能设置九条推荐计划");
+        }
+       this.update(new LambdaUpdateWrapper<Plan>().eq(Plan::getId,id)
+                                                    .set(Plan::getStatus, "1"));
+
+    }
+
+    @Override
+    public void removeSuggestPlan(Integer id) {
+        this.update(new LambdaUpdateWrapper<Plan>().eq(Plan::getId,id)
+            .set(Plan::getStatus, "0"));
+
     }
 }

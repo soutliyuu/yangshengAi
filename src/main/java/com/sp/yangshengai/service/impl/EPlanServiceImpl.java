@@ -1,6 +1,7 @@
 package com.sp.yangshengai.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.sp.yangshengai.pojo.entity.*;
 import com.sp.yangshengai.mapper.EPlanMapper;
 import com.sp.yangshengai.pojo.entity.bo.EPlanBo;
@@ -135,6 +136,22 @@ public class EPlanServiceImpl extends ServiceImpl<EPlanMapper, EPlan> implements
             return planVos;
         }
         return null;
+    }
+
+    @Override
+    public void setSuggestEPlan(Integer id) {
+        List<EPlan> list = this.list(new LambdaQueryWrapper<EPlan>().eq(EPlan::getStatus, "1"));
+        if (list.size()>9){
+            throw  new RuntimeException("只能设置九条推荐计划");
+        }
+        this.update(new LambdaUpdateWrapper<EPlan>().eq(EPlan::getId,id)
+                .set(EPlan::getStatus, "1"));
+    }
+
+    @Override
+    public void removeSuggestEPlan(Integer id) {
+        this.update(new LambdaUpdateWrapper<EPlan>().eq(EPlan::getId,id)
+                .set(EPlan::getStatus, "0"));
     }
 
     @Override
