@@ -24,7 +24,7 @@ public class EchartsResult<X,D> implements Serializable {
 
         private String name;
 
-        private Integer value = 0;
+        private Double value = 0.0;
 
 
     }

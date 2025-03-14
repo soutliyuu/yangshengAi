@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,33 +69,50 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
         StartAndEnd startAndEnd = new StartAndEnd(timeEnum);
         switch (personEnum){
             case SUGER:
-                Map<Integer, Map.Entry<LocalDateTime, Double>> bloodSugarMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
+                 Map<LocalDateTime, Double> bloodSugarMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
                         .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
                         .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
-                        .stream().collect(Collectors.toMap(PersonalDetail::getId,detail -> Map.entry(detail.getDate(), detail.getBloodSugar())));
-                List<String> timeListBetween = startAndEnd.getTimeListBetween();
-                timeListBetween.sort((TimeUtils::compareStr));
-                EchartsResult<String, String> result = new EchartsResult<String, String>();
-                for (String time : timeListBetween) {
-                    Map.Entry<LocalDateTime, Double> entry = bloodSugarMap.get(time);
-                    result.getXAxis().add(startAndEnd.getXAxisTimeStr(time));
-                    result.getSeriesCount().add(entry != null ? entry.getValue() : 0);
-                }
+                        .stream().collect(Collectors.toMap(PersonalDetail::getDate,PersonalDetail::getBloodSugar));
 
+                 return Handledata(bloodSugarMap,startAndEnd);
+            case WEIGHT:
+                Map<LocalDateTime, Double> weightMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
+                                .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
+                                .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
+                        .stream().collect(Collectors.toMap(PersonalDetail::getDate,PersonalDetail::getWeight));
 
-                return
-
-
-                case WEIGHT:
-                    return new EchartsResult<String, String>().setXAxis(startAndEnd.getTimeListBetween())
-                            .setSeriesCount(startAndEnd.getTimeListBetween().stream().map(time -> {
-                            }).toList());
+                    return Handledata(weightMap,startAndEnd);
             case URIC:
-                        return new EchartsResult<String, String>().setXAxis(startAndEnd.getTimeListBetween())
-                                .setSeriesCount(startAndEnd.getTimeListBetween().stream().map(time -> {
-                                }).toList());
+                Map<LocalDateTime, Double> uricMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
+                                .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
+                                .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
+                        .stream().collect(Collectors.toMap(PersonalDetail::getDate,PersonalDetail::getUricAcid));
+
+                return Handledata(uricMap,startAndEnd);
         }
         return null;
+    }
+
+    private EchartsResult<String, String> Handledata(Map<LocalDateTime, Double> dataMap,StartAndEnd startAndEnd) {
+        List<String> timeListBetween = startAndEnd.getTimeListBetween();
+        timeListBetween.sort((TimeUtils::compareStr));
+        EchartsResult<String, String> result = new EchartsResult<String, String>();
+        List<EchartsResult.SeriesCount<String>> seriesCountList = new ArrayList<>();
+        timeListBetween.stream().forEach(time -> {
+            result.getXAxis().add(startAndEnd.getXAxisTimeStr(time));
+
+            Double value = dataMap.getOrDefault(LocalDateTime.parse(time), 0.0);
+
+            EchartsResult.SeriesCount seriesCount = new EchartsResult.SeriesCount();
+            seriesCount.setName(startAndEnd.getXAxisTimeStr(time));
+            seriesCount.setValue(value);
+            seriesCountList.add(seriesCount);
+        });
+        result.setSeriesCount(seriesCountList);
+
+        return result;
+
+
     }
 
 

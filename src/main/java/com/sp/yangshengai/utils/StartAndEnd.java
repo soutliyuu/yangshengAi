@@ -36,27 +36,6 @@ public class StartAndEnd {
         resetStartTime();
     }
 
-//    public StartAndEnd(QueryTime queryTime) {
-//        this.queryTime = queryTime;
-//        if (queryTime != null) {
-//            if (queryTime == QueryTime.day) {
-//                this.sqlFormat = "YYYY MM DD HH24";
-//                this.chronoUnit = ChronoUnit.HOURS;
-//                this.start = end.minusHours(23);
-//
-//            } else if (queryTime == QueryTime.week) {
-//                this.chronoUnit = ChronoUnit.DAYS;
-//                this.sqlFormat = "YYYY MM DD";
-//                this.start = end.minusDays(6);
-//            } else if (queryTime == QueryTime.month) {
-//                this.chronoUnit = ChronoUnit.DAYS;
-//                this.sqlFormat = "YYYY MM DD";
-//                this.start = end.minusMonths(1);
-//            }
-//
-//        }
-//        resetStartTime();
-//    }
 
     public StartAndEnd(TimeEnum timeEnum) {
         this.timeEnum = timeEnum;
