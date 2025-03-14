@@ -2,6 +2,9 @@ package com.sp.yangshengai.service;
 
 import com.sp.yangshengai.pojo.entity.Signin;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sp.yangshengai.pojo.entity.vo.SiginVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,4 +17,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface SigninService extends IService<Signin> {
 
     void add();
+
+    List<SiginVo> getmonth(String str);
 }
