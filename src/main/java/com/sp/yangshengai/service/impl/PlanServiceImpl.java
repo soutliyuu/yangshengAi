@@ -81,29 +81,35 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
                         .status(plan.getStatus())
                         .build();
                 return planVo;
-            }).toList();
+            }).sorted((o1, o2) -> o2.getId().compareTo(o1.getId())).toList();
            return TableDataInfo.build(planVos);
         }
         return null;
     }
 
     @Override
-    public List<PlanDetailVo> getDetailById(Integer id) {
+    public PlanDetailVo getDetailById(Integer id) {
         if (id != null){
+            Plan plan = this.getById(id);
+            PlanDetailVo planDetailVo = PlanDetailVo.builder()
+                    .name(plan.getPlanName())
+                    .description(plan.getDescription())
+                    .build();
 
             List<PlanSmall> planSmallList = planSmallService.list(new LambdaQueryWrapper<PlanSmall>().eq(PlanSmall::getPlanId, id));
             List<Integer> smallTypeIds = planSmallList.stream().map(PlanSmall::getSId).toList();
             if (smallTypeIds != null){
                 List<Smalltype> smalltypeList = smalltypeService.listByIds(smallTypeIds);
-                List<PlanDetailVo> planDetailVos = smalltypeList.stream().map(smalltype -> {
-                    PlanDetailVo planDetailVo = PlanDetailVo.builder()
+                List<PlanDetailVo.SmallTypeDetailVo>  smallTypeDetailVos= smalltypeList.stream().map(smalltype -> {
+                     PlanDetailVo.SmallTypeDetailVo smallTypeDetailVo = PlanDetailVo.SmallTypeDetailVo.builder()
                             .id(smalltype.getId())
-                            .sName(smalltype.getSName())
+                            .name(smalltype.getSName())
                             .image(smalltype.getImage())
                             .build();
-                   return planDetailVo;
+                   return smallTypeDetailVo;
                 }).toList();
-                return planDetailVos;
+                planDetailVo.setSmalltypes(smallTypeDetailVos);
+                return planDetailVo;
             }
         }
         return null;

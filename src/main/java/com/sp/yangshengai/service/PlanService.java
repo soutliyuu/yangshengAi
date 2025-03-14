@@ -24,7 +24,7 @@ public interface PlanService extends IService<Plan> {
 
     TableDataInfo<PlanVo> getpage(PageQuery pageQuery);
 
-    List<PlanDetailVo> getDetailById(Integer id);
+    PlanDetailVo getDetailById(Integer id);
 
     List<PlanVo> getSuggestPlan();
 

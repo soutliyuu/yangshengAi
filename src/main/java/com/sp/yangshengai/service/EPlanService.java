@@ -28,7 +28,7 @@ public interface EPlanService extends IService<EPlan> {
 
     TableDataInfo<EPlanVo> getpage(PageQuery pageQuery);
 
-    List<EPlanDetailVo> getDetailById(Integer id);
+    EPlanDetailVo getDetailById(Integer id);
 
     List<EPlanVo> getSuggestPlan();
 }

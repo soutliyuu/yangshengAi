@@ -55,7 +55,7 @@ public class EPlanController {
 
     @Operation(summary = "详情，传计划id")
     @GetMapping("/getDetail")
-    public R<List<EPlanDetailVo>> getDetail(Integer id) {
+    public R<EPlanDetailVo> getDetail(Integer id) {
         return R.ok(eplanService.getDetailById(id));
     }
 

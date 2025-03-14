@@ -48,4 +48,6 @@ public class SigninServiceImpl extends ServiceImpl<SigninMapper, Signin> impleme
                 .date(LocalDateTime.now())
                 .build();
     }
+
+
 }

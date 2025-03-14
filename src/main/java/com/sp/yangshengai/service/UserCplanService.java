@@ -2,6 +2,7 @@ package com.sp.yangshengai.service;
 
 import com.sp.yangshengai.pojo.entity.UserCplan;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sp.yangshengai.pojo.entity.vo.CplanVo;
 
 /**
  * <p>
@@ -16,4 +17,6 @@ public interface UserCplanService extends IService<UserCplan> {
     void addbyeplan(Integer id);
 
     void addbyplan(Integer id);
+
+    CplanVo getcplan();
 }

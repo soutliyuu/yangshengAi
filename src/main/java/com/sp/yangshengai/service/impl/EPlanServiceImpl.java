@@ -85,29 +85,35 @@ public class EPlanServiceImpl extends ServiceImpl<EPlanMapper, EPlan> implements
                         .status(plan.getStatus())
                         .build();
                 return planVo;
-            }).toList();
+            }).sorted((o1, o2) -> o2.getId().compareTo(o1.getId())).toList();
             return TableDataInfo.build(planVos);
         }
         return null;
     }
 
     @Override
-    public List<EPlanDetailVo> getDetailById(Integer id) {
+    public EPlanDetailVo getDetailById(Integer id) {
         if (id != null){
+            EPlan plan = this.getById(id);
+            EPlanDetailVo planDetailVo = EPlanDetailVo.builder()
+                    .name(plan.getPlanName())
+                    .description(plan.getDescription())
+                    .build();
 
             List<EPlanSmall> planSmallList = planSmallService.list(new LambdaQueryWrapper<EPlanSmall>().eq(EPlanSmall::getPlanId, id));
             List<Integer> smallTypeIds = planSmallList.stream().map(EPlanSmall::getSId).toList();
             if (smallTypeIds != null){
                 List<ESmalltype> smalltypeList = smalltypeService.listByIds(smallTypeIds);
-                List<EPlanDetailVo> planDetailVos = smalltypeList.stream().map(smalltype -> {
-                    EPlanDetailVo planDetailVo = EPlanDetailVo.builder()
+                List<EPlanDetailVo.SmallTypeDetailVo> sTypeDetailVos = smalltypeList.stream().map(smalltype -> {
+                    EPlanDetailVo.SmallTypeDetailVo smallTypeDetailVo = EPlanDetailVo.SmallTypeDetailVo.builder()
                             .id(smalltype.getId())
-                            .sName(smalltype.getEsName())
+                            .name(smalltype.getEsName())
                             .image(smalltype.getImage())
                             .build();
-                    return planDetailVo;
+                    return smallTypeDetailVo;
                 }).toList();
-                return planDetailVos;
+                planDetailVo.setSmalltypes(sTypeDetailVos);
+                return planDetailVo;
             }
         }
         return null;
