@@ -1,6 +1,7 @@
 package com.sp.yangshengai.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sp.yangshengai.pojo.entity.EPlan;
 import com.sp.yangshengai.pojo.entity.Plan;
@@ -30,7 +31,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserCplanServiceImpl extends ServiceImpl<UserCplanMapper, UserCplan> implements UserCplanService {
 
-    private  final PlanService planService;
+
+
+    private PlanService getPlanService() { return SpringUtil.getBean(PlanService.class); }
 
     private final EPlanService ePlanService;
 
@@ -86,7 +89,7 @@ public class UserCplanServiceImpl extends ServiceImpl<UserCplanMapper, UserCplan
             cplanVo.setEPlanVo(ePlanVo);
         }
         if (userCplan.getCPlanid() != null){
-            Plan byId = planService.getById(userCplan.getCPlanid());
+            Plan byId = this.getPlanService().getById(userCplan.getCPlanid());
             PlanVo planVo = PlanVo.builder()
                     .id(byId.getId())
                     .planName(byId.getPlanName())

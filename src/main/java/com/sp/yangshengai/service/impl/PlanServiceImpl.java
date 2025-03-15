@@ -34,7 +34,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
 
     private final SmalltypeService smalltypeService;
 
-    private final UserCplanService userCplanService;
+
 
     @Override
     public void add(PlanBo planBo) {
