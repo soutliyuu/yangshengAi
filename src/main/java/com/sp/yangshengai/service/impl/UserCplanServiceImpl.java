@@ -35,7 +35,7 @@ public class UserCplanServiceImpl extends ServiceImpl<UserCplanMapper, UserCplan
 
     private PlanService getPlanService() { return SpringUtil.getBean(PlanService.class); }
 
-    private final EPlanService ePlanService;
+    private EPlanService getEPlanService() { return SpringUtil.getBean(EPlanService.class); }
 
     @Override
     public void addbyeplan(Integer id) {
@@ -79,7 +79,7 @@ public class UserCplanServiceImpl extends ServiceImpl<UserCplanMapper, UserCplan
         }
         Integer cEplanid = userCplan.getCEplanid();
         if (cEplanid != null){
-            EPlan ebyId = ePlanService.getById(cEplanid);
+            EPlan ebyId = this.getEPlanService().getById(cEplanid);
             EPlanVo ePlanVo = EPlanVo.builder()
                     .id(ebyId.getId())
                     .ePlanName(ebyId.getPlanName())
