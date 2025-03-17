@@ -64,7 +64,7 @@ public class WebSecurityConfig {
 		//String[] permits = permitList.toArray(new String[0]);
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(request -> request
-						.requestMatchers("/user/login","/user/signup","/upload/**", "/v3/api-docs/**",
+						.requestMatchers("/user/login","/user/signup","/uploadfile/**", "/v3/api-docs/**",
 								"/swagger-ui/**",
 								"/swagger-ui.html",
 								"/webjars/**",

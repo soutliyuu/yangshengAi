@@ -15,6 +15,8 @@ spring:
       timeout: 10000
 
 
+
+
 mybatis-plus:
   type-aliases-package: com.sp.yangshengai.pojo
 
@@ -29,6 +31,10 @@ file:
   #??????
   PublicNetworkIp: http://localhost:8080/uploadfile/
 
+ai-api:
+  key: sk-5d2e2cb19cbe4bb78e292a4d4b3aaa6f
+  model: deepseek-r1-distill-llama-70b
+
 springdoc:
   api-docs:
     enabled: true # 开启OpenApi接口
@@ -40,4 +46,5 @@ springdoc:
    # 自定义路径，默认为"/swagger-ui/index.html"
     # Packages to include,多个用 , 分割
   packagesToScan: com.sp.yangshengai.controller
+
 
