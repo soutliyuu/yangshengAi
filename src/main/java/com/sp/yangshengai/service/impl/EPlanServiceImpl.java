@@ -97,6 +97,7 @@ public class EPlanServiceImpl extends ServiceImpl<EPlanMapper, EPlan> implements
         if (id != null){
             EPlan plan = this.getById(id);
             EPlanDetailVo planDetailVo = EPlanDetailVo.builder()
+                    .id(plan.getId())
                     .name(plan.getPlanName())
                     .description(plan.getDescription())
                     .build();

@@ -9,6 +9,8 @@ import java.util.List;
 @Builder
 public class EPlanDetailVo {
 
+    private Integer id;
+
     private String name;
 
     private String description;

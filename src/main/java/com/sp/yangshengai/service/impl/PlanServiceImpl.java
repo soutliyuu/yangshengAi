@@ -94,6 +94,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
         if (id != null){
             Plan plan = this.getById(id);
             PlanDetailVo planDetailVo = PlanDetailVo.builder()
+                    .id(plan.getId())
                     .name(plan.getPlanName())
                     .description(plan.getDescription())
                     .build();

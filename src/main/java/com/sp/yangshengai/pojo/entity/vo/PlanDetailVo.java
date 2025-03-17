@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @Builder
 public class PlanDetailVo {
+   private Integer id;
 
    private String name;
 
