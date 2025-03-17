@@ -159,6 +159,7 @@ public class EPlanServiceImpl extends ServiceImpl<EPlanMapper, EPlan> implements
     public void delete(Integer id) {
         this.removeById(id);
         planSmallService.remove(new LambdaQueryWrapper<EPlanSmall>().eq(EPlanSmall::getPlanId, id));
+        userPlanService.remove(new LambdaQueryWrapper<EUserPlan>().eq(EUserPlan::getUserId, SecurityUtils.getUserId()).eq(EUserPlan::getPlanId, id));
     }
 
     @Override

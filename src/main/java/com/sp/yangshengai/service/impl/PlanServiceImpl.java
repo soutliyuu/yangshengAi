@@ -140,6 +140,7 @@ public class PlanServiceImpl extends ServiceImpl<PlanMapper, Plan> implements Pl
     public void delete(Integer id) {
         this.removeById(id);
         planSmallService.remove(new LambdaQueryWrapper<PlanSmall>().eq(PlanSmall::getPlanId, id));
+        userPlanService.remove(new LambdaQueryWrapper<UserPlan>().eq(UserPlan::getUserId, SecurityUtils.getUserId()).eq(UserPlan::getPlanId, id));
     }
 
     @Override
