@@ -2,14 +2,13 @@ package com.sp.yangshengai.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sp.yangshengai.pojo.entity.*;
-import com.sp.yangshengai.service.EPlanService;
-import com.sp.yangshengai.service.PlanService;
-import com.sp.yangshengai.service.UserService;
-import com.sp.yangshengai.service.YszsService;
+import com.sp.yangshengai.service.*;
+import com.sp.yangshengai.service.impl.UploadServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,6 +25,12 @@ public class AdminController {
     private final PlanService planService;
 
     private final EPlanService ePlanService;
+
+    private final SmalltypeService smallTypeService;
+
+    private final ESmalltypeService eSmallTypeService;
+
+    private final UploadServiceImpl uploadService;
 
     @GetMapping("/users")
     @Operation(summary = "获取用户列表")
@@ -94,6 +99,53 @@ public class AdminController {
     public R<Void> removeSuggestEPlan(Integer id){
         ePlanService.removeSuggestEPlan(id);
         return R.ok();
+    }
+
+    @Operation(summary = "膳食计划新增小类,传大类id")
+    @PostMapping("/addSmallType}")
+    public R<Void> addSmallType(@RequestBody Smalltype smallType){
+        smallTypeService.save(smallType);
+        return R.ok();
+    }
+
+    @Operation(summary = "膳食计划删除小类,传小类id")
+    @DeleteMapping("/deleteSmallType/{id}")
+    public R<Void> deleteSmallType(@PathVariable Integer id){
+        smallTypeService.removeById(id);
+        return R.ok();
+    }
+
+    @Operation(summary = "膳食计划修改小类,传小类id")
+    @PutMapping("/updateSmallType")
+    public R<Void> updateSmallType(@RequestBody Smalltype smallType){
+        smallTypeService.updateById(smallType);
+        return R.ok();
+    }
+
+    @Operation(summary = "运动计划新增小类,传大类id")
+    @PostMapping("/addESmallType}")
+    public R<Void> addESmallType(@RequestBody ESmalltype smallType){
+        eSmallTypeService.save(smallType);
+        return R.ok();
+    }
+
+    @Operation(summary = "运动计划删除小类,传小类id")
+    @DeleteMapping("/deleteESmallType/{id}")
+    public R<Void> deleteESmallType(@PathVariable Integer id){
+        eSmallTypeService.removeById(id);
+        return R.ok();
+    }
+
+    @Operation(summary = "运动计划修改小类,传小类id")
+    @PutMapping("/updateESmallType")
+    public R<Void> updateESmallType(@RequestBody ESmalltype smallType){
+        eSmallTypeService.updateById(smallType);
+        return R.ok();
+    }
+
+    @PostMapping("/uploadfile")
+    public R<String> upload(@RequestParam("file") MultipartFile file){
+        return R.ok(uploadService.upload(file));
     }
 
 }
