@@ -1,7 +1,10 @@
 package com.sp.yangshengai.service;
 
-import com.sp.yangshengai.pojo.entity.Bigtype;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sp.yangshengai.pojo.entity.Bigtype;
+import com.sp.yangshengai.pojo.entity.vo.BigTypeAndSmallVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface BigtypeService extends IService<Bigtype> {
 
+    List<BigTypeAndSmallVo> getAll();
 }
