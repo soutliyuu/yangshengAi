@@ -37,7 +37,7 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
     @Override
     public void add(PersonalDetailBo personalDetailbo) {
 
-        PersonalDetail personalDetail = personalDetailMapper.selectOne(new LambdaQueryWrapper<PersonalDetail>().eq(PersonalDetail::getUserId, SecurityUtils.getUserId()));
+        PersonalDetail personalDetail = getOne(new LambdaQueryWrapper<PersonalDetail>().eq(PersonalDetail::getUserId, SecurityUtils.getUserId()));
         if (personalDetail == null) {
             personalDetail = PersonalDetail.builder()
                     .bloodSugar(personalDetailbo.getBloodSugar())
@@ -54,7 +54,7 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
 
     @Override
     public PersonalDetailVo getTodayDetail() {
-        PersonalDetail personalDetail = personalDetailMapper.selectOne(new LambdaQueryWrapper<PersonalDetail>()
+        PersonalDetail personalDetail = getOne(new LambdaQueryWrapper<PersonalDetail>()
                                                                     .eq(PersonalDetail::getUserId ,SecurityUtils.getUserId())
                                                                     .between(PersonalDetail::getDate, LocalDateTime.now().with(LocalDateTime.MIN),
                                                                             LocalDateTime.now().with(LocalDateTime.MAX)));
