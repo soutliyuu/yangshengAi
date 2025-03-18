@@ -40,6 +40,7 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
         PersonalDetail personalDetail = getOne(new LambdaQueryWrapper<PersonalDetail>().eq(PersonalDetail::getUserId, SecurityUtils.getUserId()));
         if (personalDetail == null) {
             personalDetail = PersonalDetail.builder()
+                    .userId(SecurityUtils.getUserId())
                     .bloodSugar(personalDetailbo.getBloodSugar())
                     .uricAcid(personalDetailbo.getUricAcid())
                     .weight(personalDetailbo.getWeight())
