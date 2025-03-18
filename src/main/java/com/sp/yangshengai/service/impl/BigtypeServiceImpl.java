@@ -1,9 +1,11 @@
 package com.sp.yangshengai.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sp.yangshengai.mapper.BigtypeMapper;
 import com.sp.yangshengai.pojo.entity.Bigtype;
+import com.sp.yangshengai.pojo.entity.ESmalltype;
 import com.sp.yangshengai.pojo.entity.Smalltype;
 import com.sp.yangshengai.pojo.entity.vo.BigTypeAndSmallVo;
 import com.sp.yangshengai.service.BigtypeService;
@@ -25,6 +27,8 @@ public class BigtypeServiceImpl extends ServiceImpl<BigtypeMapper, Bigtype> impl
     private SmalltypeServiceImpl getsmalltypeService() {
         return SpringUtil.getBean(SmalltypeServiceImpl.class);
     }
+
+    private PlanSmallServiceImpl getPlanSmallService() {return SpringUtil.getBean(PlanSmallServiceImpl.class);}
     @Override
     public List<BigTypeAndSmallVo> getAll() {
         List<Smalltype> smalltypes = this.getsmalltypeService().list();
@@ -44,5 +48,13 @@ public class BigtypeServiceImpl extends ServiceImpl<BigtypeMapper, Bigtype> impl
             return bigTypeAndSmallVo;
         }).collect(Collectors.toList());
 
+    }
+
+    @Override
+    public void deleteBigType(Integer id) {
+        removeById(id);
+        List<Smalltype> list = getsmalltypeService().list(new LambdaQueryWrapper<Smalltype>().eq(Smalltype::getBigTypeId, id));
+        getsmalltypeService().removeByIds(list);
+        getPlanSmallService().removeByIds(list);
     }
 }

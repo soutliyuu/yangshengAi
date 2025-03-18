@@ -17,4 +17,6 @@ import java.util.List;
 public interface BigtypeService extends IService<Bigtype> {
 
     List<BigTypeAndSmallVo> getAll();
+
+    void deleteBigType(Integer id);
 }

@@ -7,10 +7,7 @@ import com.sp.yangshengai.service.BigtypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -55,6 +52,13 @@ public class BigtypeController {
     public R<Void> editBigType(Bigtype bigtype)
     {
         bigtypeService.saveOrUpdate(bigtype);
+        return R.ok();
+    }
+    @Operation(summary = "删除大类")
+    @DeleteMapping("/delete/{id}")
+    public R<Void> deleteBigType(@PathVariable Integer id){
+        bigtypeService.deleteBigType(id);
+
         return R.ok();
     }
 

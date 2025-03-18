@@ -1,6 +1,7 @@
 package com.sp.yangshengai.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.sp.yangshengai.pojo.entity.*;
 import com.sp.yangshengai.service.*;
 import com.sp.yangshengai.service.impl.UploadServiceImpl;
@@ -28,7 +29,11 @@ public class AdminController {
 
     private final SmalltypeService smallTypeService;
 
+    private final PlanSmallService planSmallService;
+
     private final ESmalltypeService eSmallTypeService;
+
+    private final EPlanSmallService ePlanSmallService;
 
     private final UploadServiceImpl uploadService;
 
@@ -112,6 +117,7 @@ public class AdminController {
     @DeleteMapping("/deleteSmallType/{id}")
     public R<Void> deleteSmallType(@PathVariable Integer id){
         smallTypeService.removeById(id);
+        planSmallService.remove(new LambdaQueryWrapper<PlanSmall>().eq(PlanSmall::getSId, id));
         return R.ok();
     }
 
@@ -133,6 +139,7 @@ public class AdminController {
     @DeleteMapping("/deleteESmallType/{id}")
     public R<Void> deleteESmallType(@PathVariable Integer id){
         eSmallTypeService.removeById(id);
+        ePlanSmallService.remove(new LambdaUpdateWrapper<EPlanSmall>().eq(EPlanSmall::getSId, id));
         return R.ok();
     }
 

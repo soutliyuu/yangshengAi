@@ -17,4 +17,6 @@ import java.util.List;
 public interface EBigtypeService extends IService<EBigtype> {
 
     List<EBigTypeAndSmallVo> getAll();
+
+    void deleteBigType(Integer id);
 }
