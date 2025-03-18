@@ -11,6 +11,7 @@ import com.sp.yangshengai.utils.PersonEnum;
 import com.sp.yangshengai.utils.TimeEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -23,10 +24,11 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/personalDetail")
+@RequiredArgsConstructor
 @Tag(name = "个人详情血糖体重尿酸")
 public class PersonalDetailController {
 
-    private PersonalDetailService personalDetailService;
+    private final PersonalDetailService personalDetailService;
     @PutMapping("/add")
     @Operation(summary = "添加今日")
     private R<Void> add(@RequestBody PersonalDetailBo personalDetailbo){

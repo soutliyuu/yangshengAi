@@ -1,5 +1,6 @@
 package com.sp.yangshengai.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sp.yangshengai.pojo.entity.*;
 import com.sp.yangshengai.service.EPlanService;
 import com.sp.yangshengai.service.PlanService;
@@ -8,12 +9,12 @@ import com.sp.yangshengai.service.YszsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("/admin")
+import java.util.List;
+
+@RestController
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 @Tag(name = "管理接口")
 public class AdminController {
@@ -44,6 +45,27 @@ public class AdminController {
     public R<Void> setYszs(@RequestBody Yszs yszs){
         yszsService.saveOrUpdate(yszs);
         return R.ok();
+    }
+
+    @Operation(summary = "新增养生知识")
+    @PostMapping("/add")
+    public R<Void> addYszs(@RequestBody Yszs yszs){
+        yszsService.save(yszs);
+        return R.ok();
+    }
+
+    @Operation(summary = "删除养生知识")
+    @DeleteMapping("/delete/{id}")
+    public R<Void> deleteYszs(@PathVariable Integer id){
+        yszsService.removeById(id);
+        return R.ok();
+    }
+
+    @Operation(summary = "内容模糊查询")
+    @GetMapping("/getByname")
+    public R<List<Yszs>> getYszsByName(String name){
+        return R.ok(yszsService.list(new LambdaQueryWrapper<Yszs>().like(Yszs::getName, name)));
+
     }
 
     @Operation(summary = "设置为推荐计划,仅管理员可设置,膳食计划的推荐计划")
