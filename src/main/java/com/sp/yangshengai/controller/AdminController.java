@@ -102,7 +102,7 @@ public class AdminController {
     }
 
     @Operation(summary = "膳食计划新增小类,传大类id")
-    @PostMapping("/addSmallType}")
+    @PostMapping("/addSmallType")
     public R<Void> addSmallType(@RequestBody Smalltype smallType){
         smallTypeService.save(smallType);
         return R.ok();
@@ -123,7 +123,7 @@ public class AdminController {
     }
 
     @Operation(summary = "运动计划新增小类,传大类id")
-    @PostMapping("/addESmallType}")
+    @PostMapping("/addESmallType")
     public R<Void> addESmallType(@RequestBody ESmalltype smallType){
         eSmallTypeService.save(smallType);
         return R.ok();
