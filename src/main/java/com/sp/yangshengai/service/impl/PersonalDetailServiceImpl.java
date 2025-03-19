@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,10 +56,11 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
 
     @Override
     public PersonalDetailVo getTodayDetail() {
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MAX);
         PersonalDetail personalDetail = getOne(new LambdaQueryWrapper<PersonalDetail>()
                                                                     .eq(PersonalDetail::getUserId ,SecurityUtils.getUserId())
-                                                                    .between(PersonalDetail::getDate, LocalDateTime.now().with(LocalDateTime.MIN),
-                                                                            LocalDateTime.now().with(LocalDateTime.MAX)));
+                                                                    .between(PersonalDetail::getDate, startOfDay, endOfDay));
         if (personalDetail == null) {
            throw new RuntimeException("今天还没有上传信息");
          }

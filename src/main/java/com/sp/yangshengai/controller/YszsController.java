@@ -1,5 +1,6 @@
 package com.sp.yangshengai.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sp.yangshengai.pojo.entity.Yszs;
 import com.sp.yangshengai.service.YszsService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +25,12 @@ import java.util.List;
 public class YszsController {
     private final YszsService yszsService;
     @RequestMapping("/getYszs")
-    public List<Yszs> getYszs() {
+    public List<Yszs> getYszs(String name) {
+        if (name != null) {
+            LambdaQueryWrapper<Yszs> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.like(Yszs::getName, name);
+            return yszsService.list(queryWrapper);
+        }
         return yszsService.list();
     }
 
