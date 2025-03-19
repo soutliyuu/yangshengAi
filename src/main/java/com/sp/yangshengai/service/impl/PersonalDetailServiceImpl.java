@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,15 +43,16 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
    private final PersonalDetailMapper personalDetailMapper;
     @Override
     public void add(PersonalDetailBo personalDetailbo) {
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MAX);
 
-        PersonalDetail personalDetail = getOne(new LambdaQueryWrapper<PersonalDetail>().eq(PersonalDetail::getUserId, SecurityUtils.getUserId()));
+        PersonalDetail personalDetail = getOne(new LambdaQueryWrapper<PersonalDetail>().eq(PersonalDetail::getUserId, SecurityUtils.getUserId()).between(PersonalDetail::getDate, startOfDay, endOfDay));
         if (personalDetail == null) {
             personalDetail = PersonalDetail.builder()
                     .userId(SecurityUtils.getUserId())
                     .bloodSugar(personalDetailbo.getBloodSugar())
                     .uricAcid(personalDetailbo.getUricAcid())
                     .weight(personalDetailbo.getWeight())
-                    .id(SecurityUtils.getUserId())
                     .date(LocalDateTime.now())
                     .build();
             save(personalDetail);
@@ -105,15 +107,23 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
 
     private EchartsResult<String, String> Handledata(Map<LocalDateTime, Double> dataMap,StartAndEnd startAndEnd) {
         List<String> timeListBetween = startAndEnd.getTimeListBetween();
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM dd");
         timeListBetween.sort((TimeUtils::compareStr));
         log.info("{}",timeListBetween);
         EchartsResult<String, String> result = new EchartsResult<String, String>();
         List<EchartsResult.SeriesCount<String>> seriesCountList = new ArrayList<>();
+
+        Map<String, Double> stringKeyDataMap = new HashMap<>();
+        dataMap.forEach((key, value) -> {
+            String formattedKey = key.format(formatter);// 将 LocalDateTime 转换为字符串
+            log.info("{}",formattedKey);
+            stringKeyDataMap.put(formattedKey, value);
+        });
+
         timeListBetween.stream().forEach(time -> {
             result.getXAxis().add(startAndEnd.getXAxisTimeStr(time));
 
-            Double value = dataMap.getOrDefault(time, 0.0);
+            Double value = stringKeyDataMap.getOrDefault(time, 0.0);
 
             EchartsResult.SeriesCount seriesCount = new EchartsResult.SeriesCount();
             seriesCount.setName(startAndEnd.getXAxisTimeStr(time));
