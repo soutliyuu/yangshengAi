@@ -54,10 +54,14 @@ public class SigninServiceImpl extends ServiceImpl<SigninMapper, Signin> impleme
         if (userCplan == null) {
             throw new RuntimeException("请先设置计划");
         }
-              signin =  Signin.builder()
-                .userId(SecurityUtils.getUserId())
+        if (userCplan.getCPlanid() == null || userCplan.getCEplanid() == null) {
+            throw new RuntimeException("请先添加膳食计划和运动计划");
+        }
+
+        signin =  Signin.builder()
                 .cPlanid(userCplan.getCPlanid())
                 .cEplanid(userCplan.getCEplanid())
+                .userId(SecurityUtils.getUserId())
                 .date(LocalDateTime.now())
                 .build();
         baseMapper.insert(signin);

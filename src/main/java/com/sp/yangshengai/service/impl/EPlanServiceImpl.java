@@ -103,6 +103,9 @@ public class EPlanServiceImpl extends ServiceImpl<EPlanMapper, EPlan> implements
                     .build();
 
             List<EPlanSmall> planSmallList = planSmallService.list(new LambdaQueryWrapper<EPlanSmall>().eq(EPlanSmall::getPlanId, id));
+            if (planSmallList == null){
+                return null;
+            }
             List<Integer> smallTypeIds = planSmallList.stream().map(EPlanSmall::getSId).toList();
             if (smallTypeIds != null){
                 List<ESmalltype> smalltypeList = smalltypeService.listByIds(smallTypeIds);
