@@ -41,8 +41,10 @@ public class SigninServiceImpl extends ServiceImpl<SigninMapper, Signin> impleme
 
     @Override
     public void add() {
+        LocalDateTime startOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
+        LocalDateTime endOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MAX);
         Signin signin1 = baseMapper.selectOne(new LambdaQueryWrapper<Signin>().between(Signin::getDate,
-                LocalDateTime.now().with(LocalDateTime.MIN), LocalDateTime.now().with(LocalDateTime.MAX)));
+               startOfDay,endOfDay));
         if (signin1 != null) {
             throw new RuntimeException("今天已经签过到了");
         }
