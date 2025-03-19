@@ -12,11 +12,13 @@ import com.sp.yangshengai.pojo.entity.vo.PersonalDetailVo;
 import com.sp.yangshengai.service.PersonalDetailService;
 import com.sp.yangshengai.utils.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,7 @@ import static com.sp.yangshengai.utils.PersonEnum.SUGER;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper, PersonalDetail> implements PersonalDetailService {
 
    private final PersonalDetailMapper personalDetailMapper;
@@ -72,23 +75,24 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
     @Override
     public EchartsResult<String, String> getEchartsData(TimeEnum timeEnum, PersonEnum personEnum) {
         StartAndEnd startAndEnd = new StartAndEnd(timeEnum);
+
         String personStr = personEnum.getDesc();
-        switch (personStr){
-            case "SUGER":
+        switch (personEnum){
+            case SUGER:
                  Map<LocalDateTime, Double> bloodSugarMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
                         .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
                         .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
                         .stream().collect(Collectors.toMap(PersonalDetail::getDate,PersonalDetail::getBloodSugar));
 
                  return Handledata(bloodSugarMap,startAndEnd);
-            case "WEIGHT":
+            case WEIGHT:
                 Map<LocalDateTime, Double> weightMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
                                 .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
                                 .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
                         .stream().collect(Collectors.toMap(PersonalDetail::getDate,PersonalDetail::getWeight));
 
                     return Handledata(weightMap,startAndEnd);
-            case "URIC":
+            case URIC:
                 Map<LocalDateTime, Double> uricMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
                                 .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
                                 .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
@@ -101,13 +105,15 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
 
     private EchartsResult<String, String> Handledata(Map<LocalDateTime, Double> dataMap,StartAndEnd startAndEnd) {
         List<String> timeListBetween = startAndEnd.getTimeListBetween();
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM dd");
         timeListBetween.sort((TimeUtils::compareStr));
+        log.info("{}",timeListBetween);
         EchartsResult<String, String> result = new EchartsResult<String, String>();
         List<EchartsResult.SeriesCount<String>> seriesCountList = new ArrayList<>();
         timeListBetween.stream().forEach(time -> {
             result.getXAxis().add(startAndEnd.getXAxisTimeStr(time));
 
-            Double value = dataMap.getOrDefault(LocalDateTime.parse(time), 0.0);
+            Double value = dataMap.getOrDefault(time, 0.0);
 
             EchartsResult.SeriesCount seriesCount = new EchartsResult.SeriesCount();
             seriesCount.setName(startAndEnd.getXAxisTimeStr(time));
