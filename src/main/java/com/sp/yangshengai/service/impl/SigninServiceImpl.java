@@ -43,9 +43,9 @@ public class SigninServiceImpl extends ServiceImpl<SigninMapper, Signin> impleme
     public void add() {
         LocalDateTime startOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
         LocalDateTime endOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MAX);
-        Signin signin1 = baseMapper.selectOne(new LambdaQueryWrapper<Signin>().between(Signin::getDate,
+        Signin signin = baseMapper.selectOne(new LambdaQueryWrapper<Signin>().between(Signin::getDate,
                startOfDay,endOfDay));
-        if (signin1 != null) {
+        if (signin != null) {
             throw new RuntimeException("今天已经签过到了");
         }
 
@@ -54,12 +54,13 @@ public class SigninServiceImpl extends ServiceImpl<SigninMapper, Signin> impleme
         if (userCplan == null) {
             throw new RuntimeException("请先设置计划");
         }
-        Signin signin = Signin.builder()
+              signin =  Signin.builder()
                 .userId(SecurityUtils.getUserId())
                 .cPlanid(userCplan.getCPlanid())
                 .cEplanid(userCplan.getCEplanid())
                 .date(LocalDateTime.now())
                 .build();
+        baseMapper.insert(signin);
     }
 
     public List<SiginVo> getmonth(String monthStr) {
