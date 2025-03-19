@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.sp.yangshengai.utils.PersonEnum.SUGER;
+
 /**
  * <p>
  *  服务实现类
@@ -70,22 +72,23 @@ public class PersonalDetailServiceImpl extends ServiceImpl<PersonalDetailMapper,
     @Override
     public EchartsResult<String, String> getEchartsData(TimeEnum timeEnum, PersonEnum personEnum) {
         StartAndEnd startAndEnd = new StartAndEnd(timeEnum);
-        switch (personEnum){
-            case SUGER:
+        String personStr = personEnum.getDesc();
+        switch (personStr){
+            case "SUGER":
                  Map<LocalDateTime, Double> bloodSugarMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
                         .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
                         .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
                         .stream().collect(Collectors.toMap(PersonalDetail::getDate,PersonalDetail::getBloodSugar));
 
                  return Handledata(bloodSugarMap,startAndEnd);
-            case WEIGHT:
+            case "WEIGHT":
                 Map<LocalDateTime, Double> weightMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
                                 .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
                                 .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
                         .stream().collect(Collectors.toMap(PersonalDetail::getDate,PersonalDetail::getWeight));
 
                     return Handledata(weightMap,startAndEnd);
-            case URIC:
+            case "URIC":
                 Map<LocalDateTime, Double> uricMap = personalDetailMapper.selectList(new LambdaQueryWrapper<PersonalDetail>()
                                 .between(PersonalDetail::getDate, startAndEnd.getStart(), startAndEnd.getEnd())
                                 .eq(PersonalDetail::getUserId, SecurityUtils.getUserId()))
