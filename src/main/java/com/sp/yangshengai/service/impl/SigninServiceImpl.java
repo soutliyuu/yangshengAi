@@ -39,34 +39,54 @@ public class SigninServiceImpl extends ServiceImpl<SigninMapper, Signin> impleme
 
 
 
+    /**
+     * 重写添加签到方法
+     * 本方法用于处理用户每日签到逻辑，确保用户每天只能签到一次，并且已经设置了计划
+     */
     @Override
     public void add() {
+        // 获取当前日期的开始时间（00:00:00）
         LocalDateTime startOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
+        // 获取当前日期的结束时间（23:59:59.999999999）
         LocalDateTime endOfDay = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MAX);
+
+        // 查询今天是否已经签到
         Signin signin = baseMapper.selectOne(new LambdaQueryWrapper<Signin>().between(Signin::getDate,
                startOfDay,endOfDay));
+        // 如果今天已经签到，抛出异常
         if (signin != null) {
             throw new RuntimeException("今天已经签过到了");
         }
 
+        // 获取用户当前的计划
         UserCplan userCplan = userCplanService.getOne(new LambdaQueryWrapper<UserCplan>().eq(UserCplan::getUserId, SecurityUtils.getUserId()));
 
+        // 如果用户没有设置计划，抛出异常
         if (userCplan == null) {
             throw new RuntimeException("请先设置计划");
         }
+        // 如果用户未设置膳食计划和运动计划，抛出异常
         if (userCplan.getCPlanid() == null || userCplan.getCEplanid() == null) {
             throw new RuntimeException("请先添加膳食计划和运动计划");
         }
 
+        // 创建签到对象，准备插入签到记录
         signin =  Signin.builder()
                 .cPlanid(userCplan.getCPlanid())
                 .cEplanid(userCplan.getCEplanid())
                 .userId(SecurityUtils.getUserId())
                 .date(LocalDateTime.now())
                 .build();
+        // 插入签到记录到数据库
         baseMapper.insert(signin);
     }
 
+    /**
+     * 根据月份字符串获取该月份的签到信息
+     *
+     * @param monthStr 月份字符串，格式为 "YYYY-MM"
+     * @return 返回包含该月份签到信息的SiginVo对象列表
+     */
     public List<SiginVo> getmonth(String monthStr) {
         // 根据月份字符串获取月份的开始和结束日期
         LocalDateTime[] monthRange = getMonthRange(monthStr);
@@ -94,8 +114,18 @@ public class SigninServiceImpl extends ServiceImpl<SigninMapper, Signin> impleme
         return new LocalDateTime[]{startDate, endDate};
     }
 
+    /**
+     * 根据月份的缩写获取对应的Month枚举对象
+     * 此方法使用一个HashMap来映射月份的缩写到相应的Month枚举对象，以便于快速查找
+     * 它首先将输入的月份缩写转换为大写，以确保匹配的一致性，然后从HashMap中获取对应的Month枚举对象
+     *
+     * @param monthStr 月份的缩写，例如"JAN"代表一月
+     * @return 对应的Month枚举对象，如果找不到匹配项，则返回null
+     */
     public Month getMonthFromAbbreviation(String monthStr) {
+        // 创建一个HashMap来存储月份缩写与Month枚举的映射关系
         Map<String, Month> monthMap = new HashMap<>();
+        // 以下代码块初始化月份缩写与Month枚举的映射关系
         monthMap.put("JAN", Month.JANUARY);
         monthMap.put("FEB", Month.FEBRUARY);
         monthMap.put("MAR", Month.MARCH);
@@ -109,10 +139,21 @@ public class SigninServiceImpl extends ServiceImpl<SigninMapper, Signin> impleme
         monthMap.put("NOV", Month.NOVEMBER);
         monthMap.put("DEC", Month.DECEMBER);
 
+        // 将输入的月份缩写转换为大写，以确保与HashMap中的键匹配
         String upperCaseMonthStr = monthStr.toUpperCase();
+        // 根据转换后的月份缩写从HashMap中获取并返回对应的Month枚举对象
         return monthMap.get(upperCaseMonthStr);
     }
 
+    /**
+     * 根据起始和结束日期生成每月的签到视图对象列表
+     * 此方法用于处理给定月份的每一天，判断每一天是否已签到，并生成相应的签到视图对象
+     *
+     * @param startDate 月份的起始日期和时间
+     * @param endDate 月份的结束日期和时间
+     * @param signins 在给定月份内所有用户的签到记录列表
+     * @return 返回包含每个月每一天签到信息的SiginVo列表
+     */
     private List<SiginVo> generateSiginVosForMonth(LocalDateTime startDate, LocalDateTime endDate, List<Signin> signins) {
         List<SiginVo> siginVos = new ArrayList<>();
 

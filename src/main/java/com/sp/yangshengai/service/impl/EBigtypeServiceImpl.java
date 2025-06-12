@@ -33,7 +33,11 @@ public class EBigtypeServiceImpl extends ServiceImpl<EBigtypeMapper, EBigtype> i
 
     private EPlanSmallServiceImpl getEPlanSmallService() {return SpringUtil.getBean(EPlanSmallServiceImpl.class);}
 
-
+    /**
+     *
+     * @return 带查询出来的数据
+     * //获取全部运动大类夹带着它的小类
+     */
     @Override
     public List<EBigTypeAndSmallVo> getAll() {
         List<ESmalltype> smalltypes = this.getesmalltypeService().list();
@@ -53,7 +57,7 @@ public class EBigtypeServiceImpl extends ServiceImpl<EBigtypeMapper, EBigtype> i
             return bigTypeAndSmallVo;
         }).collect(Collectors.toList());
     }
-
+    //删除单个运动大类并将该大类下的所有小类删除
     @Override
     public void deleteBigType(Integer id) {
         removeById(id);

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sp.yangshengai.mapper.BigtypeMapper;
 import com.sp.yangshengai.pojo.entity.Bigtype;
-import com.sp.yangshengai.pojo.entity.ESmalltype;
 import com.sp.yangshengai.pojo.entity.Smalltype;
 import com.sp.yangshengai.pojo.entity.vo.BigTypeAndSmallVo;
 import com.sp.yangshengai.service.BigtypeService;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  服务实现类
+ *  膳食大类服务实现类
  * </p>
  *
  * @author soutliyuu
@@ -30,6 +29,13 @@ public class BigtypeServiceImpl extends ServiceImpl<BigtypeMapper, Bigtype> impl
 
     private PlanSmallServiceImpl getPlanSmallService() {return SpringUtil.getBean(PlanSmallServiceImpl.class);}
     @Override
+
+    /**
+     *
+     * @return 带查询出来的数据
+     * //获取全部膳食大类夹带着它的小类
+     */
+
     public List<BigTypeAndSmallVo> getAll() {
         List<Smalltype> smalltypes = this.getsmalltypeService().list();
         List<Bigtype> bigtypes = this.list();
@@ -51,6 +57,7 @@ public class BigtypeServiceImpl extends ServiceImpl<BigtypeMapper, Bigtype> impl
     }
 
     @Override
+    //删除单个膳食大类并将该大类下的所有小类删除
     public void deleteBigType(Integer id) {
         removeById(id);
         List<Smalltype> list = getsmalltypeService().list(new LambdaQueryWrapper<Smalltype>().eq(Smalltype::getBigTypeId, id));
